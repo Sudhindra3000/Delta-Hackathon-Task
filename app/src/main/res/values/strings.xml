@@ -4,6 +4,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="requestTypes">
         <item>GET</item>
+        <item>POST</item>
+        <item>PUT</item>
         <item>DELETE</item>
     </string-array>
 </resources>

@@ -23,18 +23,21 @@ import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class NewRequestActivity extends AppCompatActivity {
 
     private static final String TAG = "NewRequestActivity";
+    public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private ActivityNewRequestBinding binding;
 
     private OkHttpClient client;
     private RequestType requestType = RequestType.GET;
-    private String url;
+    private String url, requestBody;
 
     private ProgressDialog progressDialog;
 
@@ -52,11 +55,19 @@ public class NewRequestActivity extends AppCompatActivity {
         binding.typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                binding.bodyEt.setVisibility(View.VISIBLE);
                 switch (i) {
                     case 0:
                         requestType = RequestType.GET;
+                        binding.bodyEt.setVisibility(View.GONE);
                         break;
                     case 1:
+                        requestType = RequestType.POST;
+                        break;
+                    case 2:
+                        requestType = RequestType.PUT;
+                        break;
+                    case 3:
                         requestType = RequestType.DELETE;
                         break;
                 }
@@ -82,9 +93,27 @@ public class NewRequestActivity extends AppCompatActivity {
                     .url(url)
                     .get()
                     .build();
+            requestBody = binding.bodyEt.getText().toString();
             switch (requestType) {
-                case DELETE:
+                case POST:
                     request = new Request.Builder()
+                            .url(url)
+                            .post(RequestBody.create(requestBody, JSON))
+                            .build();
+                    break;
+                case PUT:
+                    request = new Request.Builder()
+                            .url(url)
+                            .put(RequestBody.create(requestBody, JSON))
+                            .build();
+                    break;
+                case DELETE:
+                    if (!requestBody.trim().isEmpty())
+                        request = new Request.Builder()
+                                .url(url)
+                                .delete(RequestBody.create(requestBody, JSON))
+                                .build();
+                    else request = new Request.Builder()
                             .url(url)
                             .delete()
                             .build();
@@ -104,9 +133,9 @@ public class NewRequestActivity extends AppCompatActivity {
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     progressDialog.dismiss();
                     if (response.isSuccessful()) {
-                        String body = response.body().string();
+                        String responseBody = response.body().string();
                         NewRequestActivity.this.runOnUiThread(() -> {
-                            RequestInfo requestInfo = new RequestInfo(url, body, response.code());
+                            RequestInfo requestInfo = new RequestInfo(requestType, url, requestBody, responseBody, response.code());
                             Intent intent = new Intent();
                             intent.putExtra("requestInfo", new Gson().toJson(requestInfo));
                             setResult(RESULT_OK, intent);
@@ -114,9 +143,9 @@ public class NewRequestActivity extends AppCompatActivity {
                         });
                     } else {
                         Log.i(TAG, "onResponse: " + response.message());
-                        Toast.makeText(NewRequestActivity.this, "Failed to get Response", Toast.LENGTH_SHORT).show();
-                        setResult(RESULT_CANCELED);
-                        onBackPressed();
+                        NewRequestActivity.this.runOnUiThread(() -> {
+                            Toast.makeText(NewRequestActivity.this, "Failed to get Response", Toast.LENGTH_SHORT).show();
+                        });
                     }
                 }
             });
