@@ -73,6 +73,10 @@ public class NewRequestActivity extends AppCompatActivity {
                     case 4:
                         requestType = RequestType.DELETE;
                         break;
+                    case 5:
+                        requestType = RequestType.HEAD;
+                        binding.bodyEt.setVisibility(View.GONE);
+                        break;
                 }
             }
 
@@ -125,6 +129,12 @@ public class NewRequestActivity extends AppCompatActivity {
                     else request = new Request.Builder()
                             .url(url)
                             .delete()
+                            .build();
+                    break;
+                case HEAD:
+                    request = new Request.Builder()
+                            .url(url)
+                            .head()
                             .build();
                     break;
             }

@@ -120,7 +120,8 @@
                     android:text="Body"
                     android:textColor="@android:color/black"
                     android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="@{(info.responseBody.trim().empty) ? View.GONE : View.VISIBLE}" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -128,6 +129,7 @@
                     android:autoLink="all"
                     android:text="@{info.responseBody}"
                     android:textColor="@android:color/black"
+                    android:visibility="@{(info.responseBody.trim().empty) ? View.GONE : View.VISIBLE}"
                     tools:text="JSON Body" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

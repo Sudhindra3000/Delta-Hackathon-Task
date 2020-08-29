@@ -11,17 +11,6 @@ public class RequestInfo {
     private String responseBody;
     private int code;
 
-    public RequestInfo(RequestType requestType, String url) {
-        this.requestType = requestType;
-        this.url = url;
-    }
-
-    public RequestInfo(RequestType requestType, String url, String requestBody) {
-        this.requestType = requestType;
-        this.url = url;
-        this.requestBody = requestBody;
-    }
-
     public RequestInfo(RequestType requestType, String url, String requestBody, String responseBody, int code) {
         this.requestType = requestType;
         this.url = url;

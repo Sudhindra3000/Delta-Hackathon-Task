@@ -8,5 +8,6 @@
         <item>PUT</item>
         <item>PATCH</item>
         <item>DELETE</item>
+        <item>HEAD</item>
     </string-array>
 </resources>
