@@ -65,15 +65,16 @@ public class HistoryFragment extends Fragment {
 
     private void buildRecyclerView() {
         adapter = new HistoryAdapter(infos);
+
+        binding.historyRecyclerView.setHasFixedSize(true);
+        binding.historyRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.historyRecyclerView.setAdapter(adapter);
+
         adapter.setListener(pos -> {
             Intent intent = new Intent(requireContext(), DetailsActivity.class);
             intent.putExtra("item", gson.toJson(infos.get(pos)));
             startActivity(intent);
         });
-
-        binding.historyRecyclerView.setHasFixedSize(true);
-        binding.historyRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        binding.historyRecyclerView.setAdapter(adapter);
     }
 
     @Override
