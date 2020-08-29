@@ -30,9 +30,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buildViewPager() {
+        HistoryFragment historyFragment = new HistoryFragment();
+
         fragments = new ArrayList<>();
-        fragments.add(new RequestsFragment());
-        fragments.add(new HistoryFragment());
+        fragments.add(new RequestsFragment(historyFragment::newRequest));
+        fragments.add(historyFragment);
 
         adapter = new HomeAdapter(getSupportFragmentManager(), getLifecycle());
         adapter.setFragments(fragments);

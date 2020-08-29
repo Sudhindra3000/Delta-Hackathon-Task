@@ -29,6 +29,16 @@ public class RequestsFragment extends Fragment {
     private ArrayList<ResponseFragment> responseFragments;
     private ResponseAdapter responseAdapter;
 
+    private RequestsFragmentListener listener;
+
+    public interface RequestsFragmentListener {
+        void onNewRequest(RequestInfo info);
+    }
+
+    public RequestsFragment(RequestsFragmentListener listener) {
+        this.listener = listener;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,6 +81,7 @@ public class RequestsFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_HTTP_REQUEST && resultCode == RESULT_OK) {
             RequestInfo info = new Gson().fromJson(data.getStringExtra("requestInfo"), RequestInfo.class);
+            listener.onNewRequest(info);
             if (binding.noRequestsTv.getVisibility() == View.VISIBLE) {
                 binding.noRequestsTv.setVisibility(View.GONE);
                 binding.responseContainer.setVisibility(View.VISIBLE);

@@ -1,7 +1,9 @@
 package com.sudhindra.deltahackathontask.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sudhindra.deltahackathontask.R;
 import com.sudhindra.deltahackathontask.constants.RequestType;
 import com.sudhindra.deltahackathontask.databinding.ActivityNewRequestBinding;
@@ -20,6 +23,8 @@ import com.sudhindra.deltahackathontask.models.RequestInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -40,6 +45,13 @@ public class NewRequestActivity extends AppCompatActivity {
     private String url, requestBody;
 
     private ProgressDialog progressDialog;
+
+    private SharedPreferences sharedPreferences;
+    private Gson gson = new Gson();
+
+    private ArrayList<RequestInfo> infos;
+    private Type type = new TypeToken<ArrayList<RequestInfo>>() {
+    }.getType();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +102,14 @@ public class NewRequestActivity extends AppCompatActivity {
         progressDialog.setMessage("Sending Request");
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
+
+        sharedPreferences = getSharedPreferences("pref", Context.MODE_PRIVATE);
+        String history = sharedPreferences.getString("history", "");
+
+        if (!history.equals(""))
+            infos = gson.fromJson(history, type);
+        else
+            infos = new ArrayList<>();
     }
 
     public void sendRequest(View view) {
@@ -155,6 +175,9 @@ public class NewRequestActivity extends AppCompatActivity {
                         String responseBody = response.body().string();
                         NewRequestActivity.this.runOnUiThread(() -> {
                             RequestInfo requestInfo = new RequestInfo(requestType, url, requestBody, responseBody, response.code());
+                            infos.add(0, requestInfo);
+                            String history = gson.toJson(infos);
+                            sharedPreferences.edit().putString("history", history).apply();
                             Intent intent = new Intent();
                             intent.putExtra("requestInfo", new Gson().toJson(requestInfo));
                             setResult(RESULT_OK, intent);
