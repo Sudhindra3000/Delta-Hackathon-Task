@@ -31,14 +31,16 @@ public class HistoryFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private Gson gson = new Gson();
 
-    private ArrayList<RequestInfo> infos;
+    public ArrayList<RequestInfo> infos;
     private HistoryAdapter adapter;
     private Type type = new TypeToken<ArrayList<RequestInfo>>() {
     }.getType();
 
     public void newRequest(RequestInfo info) {
-        infos.add(0, info);
-        adapter.notifyItemInserted(0);
+        if (infos != null) {
+            infos.add(0, info);
+            adapter.notifyItemInserted(0);
+        }
     }
 
     @Override

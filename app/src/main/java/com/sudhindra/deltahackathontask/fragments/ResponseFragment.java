@@ -3,6 +3,7 @@ package com.sudhindra.deltahackathontask.fragments;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +13,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.sudhindra.deltahackathontask.R;
 import com.sudhindra.deltahackathontask.databinding.FragmentResponseBinding;
 import com.sudhindra.deltahackathontask.models.RequestInfo;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class ResponseFragment extends Fragment {
 
@@ -54,7 +60,7 @@ public class ResponseFragment extends Fragment {
                         Toast.makeText(requireContext(), "Text Copied", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.export:
-
+                        exportJson();
                         return true;
                 }
                 return false;
@@ -62,6 +68,25 @@ public class ResponseFragment extends Fragment {
             popupMenu.show();
             return true;
         });
+    }
+
+    private void exportJson() {
+        String jsonString = requestInfo.getResponseBody();
+        FileWriter fileWriter;
+        try {
+            File file = new File(requireContext().getFilesDir(), "jsonFile");
+            fileWriter = new FileWriter(file);
+            fileWriter.write(jsonString);
+            fileWriter.flush();
+            fileWriter.close();
+            Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(requireContext(), requireContext().getApplicationContext().getPackageName() + ".provider", file));
+            intent.setType("application/json");
+            startActivity(Intent.createChooser(intent, "Export File Via..."));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
