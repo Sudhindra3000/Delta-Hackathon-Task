@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.gson.Gson;
 import com.sudhindra.deltahackathontask.R;
+import com.sudhindra.deltahackathontask.constants.RequestType;
 import com.sudhindra.deltahackathontask.databinding.ActivityNewRequestBinding;
 import com.sudhindra.deltahackathontask.models.RequestInfo;
 
@@ -31,6 +33,7 @@ public class NewRequestActivity extends AppCompatActivity {
     private ActivityNewRequestBinding binding;
 
     private OkHttpClient client;
+    private RequestType requestType = RequestType.GET;
     private String url;
 
     private ProgressDialog progressDialog;
@@ -46,6 +49,25 @@ public class NewRequestActivity extends AppCompatActivity {
 
         client = new OkHttpClient();
 
+        binding.typeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i) {
+                    case 0:
+                        requestType = RequestType.GET;
+                        break;
+                    case 1:
+                        requestType = RequestType.DELETE;
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         progressDialog = new ProgressDialog(this, R.style.AppTheme_ProgressDialogTheme);
         progressDialog.setMessage("Sending Request");
         progressDialog.setCancelable(false);
@@ -58,7 +80,16 @@ public class NewRequestActivity extends AppCompatActivity {
             progressDialog.show();
             Request request = new Request.Builder()
                     .url(url)
+                    .get()
                     .build();
+            switch (requestType) {
+                case DELETE:
+                    request = new Request.Builder()
+                            .url(url)
+                            .delete()
+                            .build();
+                    break;
+            }
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
