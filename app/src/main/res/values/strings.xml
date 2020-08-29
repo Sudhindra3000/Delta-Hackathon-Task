@@ -6,6 +6,7 @@
         <item>GET</item>
         <item>POST</item>
         <item>PUT</item>
+        <item>PATCH</item>
         <item>DELETE</item>
     </string-array>
 </resources>

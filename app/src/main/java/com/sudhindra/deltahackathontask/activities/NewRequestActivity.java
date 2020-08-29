@@ -68,6 +68,9 @@ public class NewRequestActivity extends AppCompatActivity {
                         requestType = RequestType.PUT;
                         break;
                     case 3:
+                        requestType = RequestType.PATCH;
+                        break;
+                    case 4:
                         requestType = RequestType.DELETE;
                         break;
                 }
@@ -107,6 +110,12 @@ public class NewRequestActivity extends AppCompatActivity {
                             .put(RequestBody.create(requestBody, JSON))
                             .build();
                     break;
+                case PATCH:
+                    request = new Request.Builder()
+                            .url(url)
+                            .patch(RequestBody.create(requestBody, JSON))
+                            .build();
+                    break;
                 case DELETE:
                     if (!requestBody.trim().isEmpty())
                         request = new Request.Builder()
@@ -124,9 +133,9 @@ public class NewRequestActivity extends AppCompatActivity {
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     progressDialog.dismiss();
                     Log.i(TAG, "onFailure: " + e.getMessage());
-                    Toast.makeText(NewRequestActivity.this, "Failed to Send Request", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_CANCELED);
-                    onBackPressed();
+                    NewRequestActivity.this.runOnUiThread(() -> {
+                        Toast.makeText(NewRequestActivity.this, "Failed to sent Request", Toast.LENGTH_SHORT).show();
+                    });
                 }
 
                 @Override
