@@ -1,5 +1,9 @@
 package com.sudhindra.deltahackathontask.models;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.sudhindra.deltahackathontask.constants.RequestType;
 
 public class RequestInfo {
@@ -37,5 +41,16 @@ public class RequestInfo {
 
     public int getCode() {
         return code;
+    }
+
+    public void setResponseBody(String responseBody) {
+        this.responseBody = responseBody;
+    }
+
+    public static String prettifyJson(String s) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(s);
+        return gson.toJson(je);
     }
 }

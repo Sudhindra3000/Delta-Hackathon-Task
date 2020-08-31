@@ -175,6 +175,7 @@ public class NewRequestActivity extends AppCompatActivity {
                         String responseBody = response.body().string();
                         NewRequestActivity.this.runOnUiThread(() -> {
                             RequestInfo requestInfo = new RequestInfo(requestType, url, requestBody, responseBody, response.code());
+                            requestInfo.setResponseBody(RequestInfo.prettifyJson(requestInfo.getResponseBody()));
                             infos.add(0, requestInfo);
                             String history = gson.toJson(infos);
                             sharedPreferences.edit().putString("history", history).apply();
