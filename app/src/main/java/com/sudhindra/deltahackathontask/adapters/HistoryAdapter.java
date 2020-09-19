@@ -1,6 +1,5 @@
 package com.sudhindra.deltahackathontask.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -38,8 +37,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             binding = historyItemBinding;
 
             binding.itemCard.setOnClickListener(v -> {
-                Log.i("TAG", "HistoryViewHolder: click");
-                listener.onItemClick(getAdapterPosition());
+                if (!binding.itemCard.isChecked()) listener.onItemClick(getAdapterPosition());
+                else binding.itemCard.setChecked(false);
+            });
+            binding.itemCard.setOnLongClickListener(v -> {
+                binding.itemCard.setChecked(true);
+                return true;
             });
         }
 

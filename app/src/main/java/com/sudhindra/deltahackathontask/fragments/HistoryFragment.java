@@ -25,10 +25,8 @@ import java.util.ArrayList;
 
 public class HistoryFragment extends Fragment {
 
-    private static final String TAG = "HistoryFragment";
     private FragmentHistoryBinding binding;
 
-    private SharedPreferences sharedPreferences;
     private Gson gson = new Gson();
 
     public ArrayList<RequestInfo> infos;
@@ -43,6 +41,10 @@ public class HistoryFragment extends Fragment {
         }
     }
 
+    public void onReselected() {
+        binding.historyRecyclerView.smoothScrollToPosition(0);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,7 +56,7 @@ public class HistoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        sharedPreferences = requireContext().getSharedPreferences("pref", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences("pref", Context.MODE_PRIVATE);
         String history = sharedPreferences.getString("history", "");
 
         if (!history.equals(""))

@@ -17,9 +17,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
 
-    private ArrayList<Fragment> fragments;
-    private HomeAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,11 +29,11 @@ public class MainActivity extends AppCompatActivity {
     private void buildViewPager() {
         HistoryFragment historyFragment = new HistoryFragment();
 
-        fragments = new ArrayList<>();
+        ArrayList<Fragment> fragments = new ArrayList<>();
         fragments.add(new RequestsFragment(historyFragment::newRequest));
         fragments.add(historyFragment);
 
-        adapter = new HomeAdapter(getSupportFragmentManager(), getLifecycle());
+        HomeAdapter adapter = new HomeAdapter(getSupportFragmentManager(), getLifecycle());
         adapter.setFragments(fragments);
 
         binding.viewPager.setAdapter(adapter);
@@ -53,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             return true;
+        });
+
+        binding.bottomNavigationView.setOnNavigationItemReselectedListener(item -> {
+            if (item.getItemId() == R.id.history) {
+                historyFragment.onReselected();
+            }
         });
     }
 }

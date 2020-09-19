@@ -163,9 +163,7 @@ public class NewRequestActivity extends AppCompatActivity {
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     progressDialog.dismiss();
                     Log.i(TAG, "onFailure: " + e.getMessage());
-                    NewRequestActivity.this.runOnUiThread(() -> {
-                        Toast.makeText(NewRequestActivity.this, "Failed to sent Request", Toast.LENGTH_SHORT).show();
-                    });
+                    NewRequestActivity.this.runOnUiThread(() -> Toast.makeText(NewRequestActivity.this, "Failed to sent Request", Toast.LENGTH_SHORT).show());
                 }
 
                 @Override
